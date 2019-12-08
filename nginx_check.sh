@@ -75,7 +75,7 @@ echo -e "\n"
 
 echo -e "\e[00;31m[+]漏洞利用检测\e[00m"
 ag -a "/wls-wsat/|uddiexplorer|@DEFAULT_MEMBER_ACCESS|@java\.lang\.Runtime|/bin/bash|cmd\.exe|wget\s|curl\s" ${access_dir}${access_log}* | awk '($9==200)||($9==500) {print $0}' | tee -a ${outfile}/exploit.log
-awk '{print "漏洞利用探测" NR"次"}' ${outfile}exploit.log | tail -n1
+awk '{print "漏洞利用探测" NR"次"}' ${outfile}/exploit.log | tail -n1
 echo -e "\n"
 
 echo -e "\e[00;31m[+]文件包含攻击\e[00m"
