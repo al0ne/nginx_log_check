@@ -23,6 +23,8 @@ echo -e "\n"
 ###寻找罕见的脚本文件访问
 ###寻找302跳转的脚本文件
 
+command -v foo >/dev/null 2>&1 || { echo >&2 "ag require but it's not installed.  You can istall it from silversearcher-ag package."; exit 1; }
+
 #如果存在多个access文件或者有多个access.x.gz 建议先zcat access*.gz >> access.log文件中
 #设置分析结果存储目录,结尾不能加/
 outfile=/tmp/logs
