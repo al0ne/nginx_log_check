@@ -43,6 +43,36 @@ if [ $num -eq 0 ]; then
     exit 1
 fi
 
+# 验证操作系统是debian系还是centos
+OS='None'
+
+if [ -e "/etc/os-release" ]; then
+	source /etc/os-release
+	case ${ID} in
+	"debian" | "ubuntu" | "devuan")
+		OS='Debian'
+		;;
+	"centos" | "rhel fedora" | "rhel")
+		OS='Centos'
+		;;
+	*) ;;
+	esac
+fi
+
+# 检测ag软件有没有安装
+if ag -V >/dev/null 2>&1; then
+	echo -e "\e[00;32msilversearcher-ag已安装 \e[00m"
+else
+	if [ $OS = 'Centos' ]; then
+		yum -y install the_silver_searcher >/dev/null 2>&1
+	else
+		apt-get -y install silversearcher-ag >/dev/null 2>&1
+	fi
+
+fi
+
+echo -e "\n"
+
 #如果检测别的日志请手动替换偏移，例如awk的$7代表url，$9代表状态码，$10代表长度,本脚本是以nginx日志为基础
 
 echo "分析结果日志：${outfile}"
