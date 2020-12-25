@@ -92,7 +92,7 @@ echo "Nginx文件名：${access_log}"
 echo -e "\n"
 
 echo -e "\e[00;31m[+]TOP 20 IP 地址\e[00m"
-ag -a -o --nofilename '\d+\.\d+\.\d+\.\d+' ${access_dir}${access_log}* | sort | uniq -c | sort -nr | head -n 20 | tee -a ${outfile}/top20.log
+ag -a -o --nofilename '((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}' ${access_dir}${access_log}* | sort | uniq -c | sort -nr | head -n 20 | tee -a ${outfile}/top20.log
 echo -e "\n"
 
 echo -e "\e[00;31m[+]SQL注入攻击分析\e[00m"
@@ -100,7 +100,7 @@ echo -e "\e[00;31m[+]SQL注入攻击分析\e[00m"
 ag -a "xp_cmdshell|%20xor|%20and|%20AND|%20or|%20OR|select%20|%20and%201=1|%20and%201=2|%20from|%27exec|information_schema.tables|load_file|benchmark|substring|table_name|table_schema|%20where%20|%20union%20|%20UNION%20|concat\(|concat_ws\(|%20group%20|0x5f|0x7e|0x7c|0x27|%20limit|\bcurrent_user\b|%20LIMIT|version%28|version\(|database%28|database\(|user%28|user\(|%20extractvalue|%updatexml|rand\(0\)\*2|%20group%20by%20x|%20NULL%2C|sqlmap" ${access_dir}${access_log}* | ag -v '/\w+\.(?:js|css|html|jpg|jpeg|png|htm|swf)(?:\?| )' | awk '($9==200)||($9==500) {print $0}' >${outfile}/sql.log
 awk '{print "SQL注入攻击" NR"次"}' ${outfile}/sql.log | tail -n1
 echo "SQL注入 TOP 20 IP地址"
-ag -o '(?<=:)\d+\.\d+\.\d+\.\d+' ${outfile}/sql.log | sort | uniq -c | sort -nr | head -n 20 | tee -a ${outfile}/sql_top20.log
+ag -o '(?<=:)((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})(\.((2(5[0-5]|[0-4]\d))|[0-1]?\d{1,2})){3}' ${outfile}/sql.log | sort | uniq -c | sort -nr | head -n 20 | tee -a ${outfile}/sql_top20.log
 # 重点关注from查询，是否存在脱裤行为，排除扫描行为
 echo "SQL注入 FROM 查询"
 cat ${outfile}/sql.log | ag '\bfrom\b' | ag -v 'information_schema' >${outfile}/sql_from_query.log
